@@ -1,4 +1,4 @@
-﻿local xPosition = -75; -- -125
+local yPosition = -75; -- original position is lower: -125
 
 local fontName = "Interface\\AddOns\\oUF_AlekkUI\\fonts\\CalibriBold.ttf"
 local fontNamePixel = "Interface\\AddOns\\oUF_AlekkUI\\fonts\\Calibri.ttf"
@@ -153,6 +153,8 @@ local function updateColor(self, unit, Health)
 	end
 end
 
+-- original does not worked
+-- local function PostUpdateHealth(self, event, unit, bar, min, max)
 local function PostUpdateHealth(Health, unit, min, max)
 	local self = Health:GetParent()
 	if(not UnitIsConnected(unit)) then
@@ -178,7 +180,9 @@ local function PostUpdateHealth(Health, unit, min, max)
 	self:UNIT_NAME_UPDATE(event, unit)
 end
 
-local function PostUpdatePower(Power, unit, min, max)-- (self, event, unit, bar, min, max)
+-- original does not worked
+-- local function PostUpdatePower(self, event, unit, bar, min, max)
+local function PostUpdatePower(Power, unit, min, max)
 	local self = Power:GetParent()
     if max == 0 or UnitIsDead(unit) or UnitIsGhost(unit) or not UnitIsConnected(unit) then  
         Power:SetValue(0) 
@@ -201,6 +205,7 @@ local function PostUpdatePower(Power, unit, min, max)-- (self, event, unit, bar,
 	Power:SetStatusBarColor(color[1], color[2], color[3]) 
 	Power:SetBackdropColor(color[1]/3, color[2]/3, color[3]/3,1)
 	
+	-- I think, this is not needed
 	--self:UNIT_NAME_UPDATE(event, unit)
 end
 
@@ -303,6 +308,7 @@ local function Style(self, unit)
 	else
 		Power:SetHeight(6)
 	end
+	
 -- power value label
 	if(unit=="player" or unit=="target") then
 		Power.value = setFontString(self.Power, fontName, baseFontSize-1)
@@ -375,6 +381,7 @@ local function Style(self, unit)
 	end
 	
 -- raid icon
+--	I not understand, why Alekk not show raid icon overlay on target-target and focus, just comment this
 --	if(unit=="player" or unit=="target" or unit == "focustarget") then
 		local icon = self.Health:CreateTexture(nil, "OVERLAY")
 		icon:SetHeight(18)
@@ -406,8 +413,10 @@ local function Style(self, unit)
 		self.MasterLooter = MasterLooter
 		
 	end
-	
+
 -- buffs and debuffs
+-- TODO:
+-- Fix buffs, it is cannot be canceled
 	if(unit=='player') then
 	--	hide Blizzard Buff frames
 	--	BuffFrame:Hide()
@@ -490,13 +499,13 @@ local function Style(self, unit)
 	end
 
 --CastBars
-	if(unit == 'player') then
+	if(unit == 'player') then -- player cast bar
 		local colorcb
 		local _,classcb = UnitClass(unit)
 		colorcb = oUF.colors.class[classcb]
 
 		self.Castbar = CreateFrame('StatusBar', nil, self)
-		self.Castbar:SetPoint('TOP', UIParentr, 'CENTER', 0, xPosition)
+		self.Castbar:SetPoint('TOP', UIParentr, 'CENTER', 0, yPosition)
 		self.Castbar:SetStatusBarTexture(textureHealthBar)
 		self.Castbar:SetStatusBarColor(colorcb[1], colorcb[2], colorcb[3])
 		self.Castbar:SetBackdrop(backdrophp)
@@ -534,9 +543,9 @@ local function Style(self, unit)
 		self.Castbar.SafeZone:SetVertexColor(1,1,.01,0.5)
 		
 	end
-	if(unit == 'target') then
+	if(unit == 'target') then  -- target cast bar
 		self.Castbar = CreateFrame('StatusBar', nil, self)
-		self.Castbar:SetPoint('TOP', UIParentr, 'CENTER', 0, xPosition+19)
+		self.Castbar:SetPoint('TOP', UIParentr, 'CENTER', 0, yPosition+19)
 		self.Castbar:SetStatusBarTexture(textureHealthBar)
 		self.Castbar:SetStatusBarColor(.81,.81,.25)
 		self.Castbar:SetBackdrop(backdrophp)
@@ -565,9 +574,9 @@ local function Style(self, unit)
 		self.Castbar.Spark:SetWidth(25)
 		self.Castbar.Spark:SetVertexColor(.69,.31,.31)
 	end
-	if(unit == 'focus') then
+	if(unit == 'focus') then -- focus cast bar
 		self.Castbar = CreateFrame('StatusBar', nil, self)
-		self.Castbar:SetPoint('TOP', UIParentr, 'CENTER', 0, xPosition-28)
+		self.Castbar:SetPoint('TOP', UIParentr, 'CENTER', 0, yPosition-28)
 		self.Castbar:SetStatusBarTexture(textureHealthBar)
 		self.Castbar:SetStatusBarColor(.79,.41,.31)
 		self.Castbar:SetBackdrop(backdrophp)
@@ -597,40 +606,37 @@ local function Style(self, unit)
 		self.Castbar.Spark:SetVertexColor(.69,.31,.31)
 	end
 
--- WORKS!!!
 --	ComboPoints	
 	if(unit == 'target') then
 		local _, class = UnitClass(unit)
-			local cpf = CreateFrame("Frame", nil, self)
-			cpf:SetPoint("BOTTOMLEFT", 5, -16)
-			cpf:SetSize(100, 20)
-			for i = 1, 5 do
-				cpf[i] = CreateFrame("StatusBar", self:GetName().."_ComboPoints"..i, self)
-				cpf[i]:SetSize(16, 16)
-				cpf[i]:SetStatusBarTexture(textureBubble)
-				if ((i >= 3) and (i <= 4)) then
-					cpf[i]:SetStatusBarColor(.67,.67,.33)
-				elseif (i < 4) then
-					cpf[i]:SetStatusBarColor(.69,.31,.31)
-				else
-					cpf[i]:SetStatusBarColor(.33,.63,.33)	
-				end
-				cpf[i]:SetFrameLevel(10)
-				local h = CreateFrame("Frame", nil, cpf[i])
-				h:SetFrameLevel(10)
-				h:SetPoint("TOPLEFT",-4,3)
-				h:SetPoint("BOTTOMRIGHT",4,-3)
-				if (i == 1) then
-					cpf[i]:SetPoint('LEFT', cpf, 'LEFT', 1, 0)
-				else
-					cpf[i]:SetPoint('TOPLEFT', cpf[i-1], "TOPRIGHT", 2, 0)
-				end
-
+		local cpf = CreateFrame("Frame", nil, self)
+		cpf:SetPoint("BOTTOMLEFT", 5, -16)
+		cpf:SetSize(100, 20)
+		for i = 1, 5 do
+			cpf[i] = CreateFrame("StatusBar", self:GetName().."_ComboPoints"..i, self)
+			cpf[i]:SetSize(16, 16)
+			cpf[i]:SetStatusBarTexture(textureBubble)
+			if ((i >= 3) and (i <= 4)) then
+				cpf[i]:SetStatusBarColor(.67,.67,.33)
+			elseif (i < 4) then
+				cpf[i]:SetStatusBarColor(.69,.31,.31)
+			else
+				cpf[i]:SetStatusBarColor(.33,.63,.33)	
 			end
-			self.CPoints = cpf
+			cpf[i]:SetFrameLevel(10)
+			local h = CreateFrame("Frame", nil, cpf[i])
+			h:SetFrameLevel(10)
+			h:SetPoint("TOPLEFT",-4,3)
+			h:SetPoint("BOTTOMRIGHT",4,-3)
+			if (i == 1) then
+				cpf[i]:SetPoint('LEFT', cpf, 'LEFT', 1, 0)
+			else
+				cpf[i]:SetPoint('TOPLEFT', cpf[i-1], "TOPRIGHT", 2, 0)
+			end
+		end
+		self.CPoints = cpf
 	end
 
--- WORKS!!!
 --	Holy Power
 	if(unit == 'player') then
 	local _, class = UnitClass(unit)
@@ -655,12 +661,10 @@ local function Style(self, unit)
 				end
 
 			end
-			self.HolyPower = hpf			
-			
+			self.HolyPower = hpf				
 		end			
 	end
 
--- WORKS!!!
 -- shadow orbs
 	if(unit == 'player') then
 	local _, class = UnitClass(unit)
@@ -690,10 +694,9 @@ local function Style(self, unit)
 		end
 	end
 
--- WORKS!!!
 --Runes
-    if (unit == 'player') then 
-	local _, class = UnitClass(unit)
+	if (unit == 'player') then 
+		local _, class = UnitClass(unit)
 		if (class == 'DEATHKNIGHT') then
 			self.Runes = CreateFrame("StatusBar", nil, self)
 			self.Runes:SetPoint("TOP", -172, 0)
@@ -729,7 +732,7 @@ local function Style(self, unit)
 				h:SetBackdropColor(0,0,0,1)
 				self.Runes[i] = r
 			end
-      end
+		end
 	end
 	
 -- TODO:
@@ -757,9 +760,9 @@ oUF:RegisterStyle('AlekkUI', Style)
 oUF:SetActiveStyle('AlekkUI')
 
 local player = oUF:Spawn("player")
-player:SetPoint("CENTER", -305, xPosition) -- -305, -125
+player:SetPoint("CENTER", -305, yPosition) -- -305, -125
 local target = oUF:Spawn("target")
-target:SetPoint("CENTER", 305, xPosition) -- 305, -125)
+target:SetPoint("CENTER", 305, yPosition) -- 305, -125)
 local pet = oUF:Spawn("pet")
 pet:SetPoint("TOPLEFT", player, "BOTTOMLEFT", 0, -75)
 local tt = oUF:Spawn("targettarget")
@@ -769,6 +772,8 @@ focus:SetPoint("TOPLEFT", player, "BOTTOMLEFT", 0, -1)
 local focustarget = oUF:Spawn("focustarget")
 focustarget:SetPoint("TOPLEFT", focus, "TOPRIGHT", 5, 0)
 
+-- TODO:
+-- Fix this
 --[[
 local function CreateMainTankStyle(self, unit)
 	self:SetBackdrop(backdrop)
