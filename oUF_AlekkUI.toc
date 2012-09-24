@@ -1,0 +1,8 @@
+## Interface: 50001
+## Author: Manriel
+## Version: 002
+## Title: oUF alekk
+## Notes: oUF layout
+## RequiredDeps: oUF
+
+oUF_AlekkUI.lua
