@@ -591,61 +591,22 @@ local function Style(self, unit)
 		self.CPoints = cpf
 	end
 
---	Holy Power
+--	Class-specific power icons
 	if(unit == 'player') then
-	local _, class = UnitClass(unit)
-		if (class == 'PALADIN') then
-			local hpf = CreateFrame("Frame", nil, self)
-			hpf:SetPoint("TOPLEFT", 5, -8)
-			hpf:SetSize(100, 20)
-			for i = 1, 5 do
-				hpf[i] = CreateFrame("StatusBar", self:GetName().."_Holypower"..i, self)
-				hpf[i]:SetSize(16, 16)
-				hpf[i]:SetStatusBarTexture(cfg.textureBubble)
-				hpf[i]:SetStatusBarColor(.96,.91,.29)  --(.95,.88,.48)
-				hpf[i]:SetFrameLevel(10)
-				local h = CreateFrame("Frame", nil, hpf[i])
-				h:SetFrameLevel(10)
-				h:SetPoint("TOPLEFT",-4,3)
-				h:SetPoint("BOTTOMRIGHT",4,-3)
-				if (i == 1) then
-					hpf[i]:SetPoint('LEFT', hpf, 'LEFT', 1, 0)
-				else
-					hpf[i]:SetPoint('TOPLEFT', hpf[i-1], "TOPRIGHT", 2, 0)
-				end
-
-			end
-			self.HolyPower = hpf				
-		end			
-	end
-
--- shadow orbs
-	if(unit == 'player') then
-	local _, class = UnitClass(unit)
-		if (class == 'PRIEST') then
-			local so = CreateFrame("Frame", nil, self)
-			so:SetPoint("TOPLEFT", 5, -8)
-			so:SetSize(100, 20)
-			local maxOrbs = UnitPowerMax('player', SPELL_POWER_SHADOW_ORBS)
-			for i = 1,maxOrbs do
-				so[i] = CreateFrame("StatusBar", self:GetName().."_so"..i, self)
-				so[i]:SetSize(16, 16)
-				so[i]:SetStatusBarTexture(cfg.textureBubble)
-				so[i]:SetStatusBarColor(1,1,1)
-				so[i]:SetFrameLevel(11)
-				--helper cfg.backdrop
-				local h = CreateFrame("Frame", nil, so[i])
-				h:SetFrameLevel(10)
-				h:SetPoint("TOPLEFT",-4,3)
-				h:SetPoint("BOTTOMRIGHT",4,-3)
-				if (i == 1) then
-					so[i]:SetPoint('LEFT', so, 'LEFT', 1, 0)
-				else
-					so[i]:SetPoint('TOPLEFT', so[i-1], 'TOPRIGHT', 2, 0)
-				end
-			end
-			self.ShadowOrbs = so
-		end
+		local cif = CreateFrame("Frame", nil, self)
+		cif:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
+		cif:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
+		local ClassIcons = {}
+		for index = 1, 5 do
+			local Icon = self.Health:CreateTexture(nil, "OVERLAY")
+			
+			-- Position and size.
+			Icon:SetSize(16, 16)
+			Icon:SetPoint('TOPLEFT', cif, 'TOPLEFT', index * Icon:GetWidth()-7, -10)
+			
+			ClassIcons[index] = Icon
+		   end
+		self.ClassIcons = ClassIcons				
 	end
 
 --Runes
@@ -688,13 +649,30 @@ local function Style(self, unit)
 			end
 		end
 	end
+
+-- EclipseBar
+	if (unit == 'player') then 
+		local _, class = UnitClass(unit)
+		if (class == 'DRUID') then
+			local LunarBar = CreateFrame('StatusBar', nil, self.Power)
+			LunarBar:SetPoint("TOPLEFT", self.Power, "BOTTOMLEFT")
+			LunarBar:SetPoint("TOPRIGHT", self.Power, "BOTTOMRIGHT", 0-self.Power:GetWidth()/2, 0)
+			LunarBar:SetWidth(1);
+			local SolarBar = CreateFrame('StatusBar', nil, self.Power)
+			SolarBar:SetPoint('LEFT', LunarBar:GetStatusBarTexture(), 'RIGHT')
+			SolarBar:SetSize(self.Power:GetWidth()/2, 1)
+			
+			self.EclipseBar = {
+				LunarBar = LunarBar,
+				SolarBar = SolarBar,
+			}
+		end
+	end
+
 	
 -- TODO:
---	eclipse bar for druids
---	TotemBar for shamans
---	harmony bar for monks
---	bar for warlocks' spec-specific powers
-	
+--	Druidmana
+--	TotemBar for shamans	
 	
 --[[
 	self.PostCreateAuraIcon = PostCreateAuraIcon
