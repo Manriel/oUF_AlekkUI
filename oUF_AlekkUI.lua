@@ -1,51 +1,5 @@
-local yPosition = -75; -- original position is lower: -125
-
-local fontName = "Interface\\AddOns\\oUF_AlekkUI\\fonts\\CalibriBold.ttf"
-local fontNamePixel = "Interface\\AddOns\\oUF_AlekkUI\\fonts\\Calibri.ttf"
-local baseFontSize = 13
-
-local textureHealthBar = "Interface\\AddOns\\oUF_AlekkUI\\textures\\Ruben"
-local textureRuneBar = "Interface\\AddOns\\oUF_AlekkUI\\textures\\rothTex"
-local textureBorder = "Interface\\AddOns\\oUF_AlekkUI\\textures\\Caith"
-local textureBubble = 'Interface\\Addons\\oUF_AlekkUI\\textures\\bubbleTex'
-local textureCastBarBorder = 'Interface\\AddOns\\oUF_AlekkUI\\textures\\border'
-local textureGlow = 'Interface\\Addons\\oUF_AlekkUI\\media\\glowTex'
-
-local backdrop = {
-	bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-	edgeFile = "Interface\\AddOns\\oUF_AlekkUI\\textures\\border", edgeSize = 12,
-	insets = {left = 0, right = 0, top = 0, bottom = 0},
-}
-
-local backdrophp = {
-	bgFile = "Interface\\AddOns\\oUF_AlekkUI\\textures\\Ruben",
-	insets = {left = 0, right = 0, top = 0, bottom = 0},
-}
-
-local classification = {
-	worldboss = '%s |cffffd700Boss|r',
-	rareelite = '%s |cffffd700R+|r',
-	elite = '%s |cffffd700++|r',
-	rare = '%s Rare',
-	normal = '%s',
-	trivial = '%s',
-}
-
-oUF.colors.power['MANA'] = {.30,.45,.65}
-oUF.colors.power['RAGE'] = {.70,.30,.30}
-oUF.colors.power['FOCUS'] = {.70,.45,.25}
-oUF.colors.power['ENERGY'] = {.65,.65,.35}
-oUF.colors.power['RUNIC_POWER'] = {.45,.45,.75}
-
-oUF.colors.runes = {
-		[1] = {.69, .31, .31},
-		[2] = {.33, .59, .33},
-		[3] = {.31, .45, .63},
-		[4] = {.84, .75, .05},
-}
-
-oUF.colors.tapped = {.55,.57,.61}
-oUF.colors.disconnected = {.5,.5,.5}
+local addon, ns = ...
+local cfg = ns.cfg
 
 local siValue = function(val)
 	if val >= 1e6 then
@@ -102,7 +56,7 @@ local function OverrideUpdateName(self, event, unit)
 	
 	if(unit == 'player' or unit == 'target') then
 		local level = not UnitIsConnected(unit) and '??' or UnitLevel(unit) < 1 and '??' or UnitLevel(unit)
-		self.Lvl:SetFormattedText(classification[UnitClassification(unit)], level)
+		self.Lvl:SetFormattedText(cfg.classification[UnitClassification(unit)], level)
 
 
 		if UnitCanAttack("player", unit) then
@@ -241,7 +195,7 @@ local function Style(self, unit)
 	self.menu = menu
 	self:SetScript('OnEnter', UnitFrame_OnEnter)
 	self:SetScript('OnLeave', UnitFrame_OnLeave)
-	self:SetBackdrop(backdrop)
+	self:SetBackdrop(cfg.backdrop)
 	self:SetBackdropColor(0,0,0,1)
 	if unit == "targettarget" or unit == "focus" or unit == "focustarget" then
 		self:SetWidth(135)
@@ -256,11 +210,11 @@ local function Style(self, unit)
 	
 -- health
 	local Health = CreateFrame("StatusBar", nil, self)
-	Health:SetStatusBarTexture(textureHealthBar)
+	Health:SetStatusBarTexture(cfg.textureHealthBar)
 	Health:SetPoint("LEFT", 4.5,0)
 	Health:SetPoint("RIGHT", -4.5,0)
 	Health:SetPoint("TOP", 0,-4.5)
-	Health:SetBackdrop(backdrophp)
+	Health:SetBackdrop(cfg.backdrophp)
 	Health:SetBackdropColor(.25,.25,.25,1);
 	Health.Smooth = true
 	Health.colorTapping = true
@@ -277,7 +231,7 @@ local function Style(self, unit)
 	self.Health = Health
 	
 -- health value label
-	self.Health.value = setFontString(self.Health, fontName, baseFontSize)
+	self.Health.value = setFontString(self.Health, cfg.fontName, cfg.baseFontSize)
 	if unit == "player" or unit == "focus"  or unit == "focustarget" or not unit then
 		self.Health.value:SetPoint("RIGHT", -3,0)
 	elseif unit == "pet" then
@@ -289,11 +243,11 @@ local function Style(self, unit)
 -- power
 	local Power = CreateFrame("StatusBar", nil, self)
 	Power:SetHeight(9.5)
-	Power:SetStatusBarTexture(textureHealthBar)
+	Power:SetStatusBarTexture(cfg.textureHealthBar)
 	Power:SetPoint("LEFT", self.Health)
 	Power:SetPoint("RIGHT", self.Health)
 	Power:SetPoint("TOP", self.Health, "BOTTOM", 0, 0)
-	Power:SetBackdrop(backdrophp)
+	Power:SetBackdrop(cfg.backdrophp)
 	Power:SetBackdropColor(.25,.25,.25,1);
 	Power.ColotSmooth = true
 	Power.frequentUpdates = true
@@ -311,7 +265,7 @@ local function Style(self, unit)
 	
 -- power value label
 	if(unit=="player" or unit=="target") then
-		Power.value = setFontString(self.Power, fontName, baseFontSize-1)
+		Power.value = setFontString(self.Power, cfg.fontName, cfg.baseFontSize-1)
 		if(unit=="player") then
 			Power.value:SetPoint("RIGHT", self.Power, "RIGHT", -3, 0)
 		elseif(unit=="target") then
@@ -322,7 +276,7 @@ local function Style(self, unit)
 	self.Power = Power
 
 -- name
-	local Name = setFontString(self.Health, fontName, baseFontSize)
+	local Name = setFontString(self.Health, cfg.fontName, cfg.baseFontSize)
 	if unit == "focus" or unit == "focustarget"  then
 		Name:SetPoint("LEFT", self.Health, "LEFT",2,0)
 		Name:SetWidth(80)
@@ -334,7 +288,7 @@ local function Style(self, unit)
 	elseif unit == "target" then
 		Name:SetPoint("RIGHT", self.Health, "RIGHT",-3,0)
 		Name:SetWidth(170)
-		Name:SetFont(fontName, 13)
+		Name:SetFont(cfg.fontName, 13)
 		Name:SetJustifyH('RIGHT')
 	elseif unit == "targettarget" then
 		Name:SetPoint("RIGHT", self.Health, "RIGHT",-3,0)
@@ -352,30 +306,30 @@ local function Style(self, unit)
 	if unit == "player" then
 		local lvl, class, race
 		
-		lvl = setFontString(self.Power, fontName, baseFontSize-1)
+		lvl = setFontString(self.Power, cfg.fontName, cfg.baseFontSize-1)
 		lvl:SetPoint("LEFT", self.Power, "LEFT", 2, 0.5)
 		self.Lvl = lvl
 
-		class = setFontString(self.Power, fontName, baseFontSize-1)
+		class = setFontString(self.Power, cfg.fontName, cfg.baseFontSize-1)
 		class:SetPoint("LEFT", lvl, "RIGHT",  1, 0)
 		self.Class = class
 	
-		race = setFontString(self.Power, fontName, baseFontSize-1)
+		race = setFontString(self.Power, cfg.fontName, cfg.baseFontSize-1)
 		race:SetPoint("LEFT", class, "RIGHT",  1, 0)
 		self.Race = race
 
 	elseif unit == "target" then
 		local lvl, class, race
 
-		race = setFontString(self.Power, fontName, baseFontSize-1)
+		race = setFontString(self.Power, cfg.fontName, cfg.baseFontSize-1)
 		race:SetPoint("RIGHT", self.Power, "RIGHT",  -2, 0.5)
 		self.Race = race
 		
-		class = setFontString(self.Power, fontName, baseFontSize-1)
+		class = setFontString(self.Power, cfg.fontName, cfg.baseFontSize-1)
 		class:SetPoint("RIGHT", race, "LEFT",  -1, 0)
 		self.Class = class
 		
-		lvl = setFontString(self.Power, fontName, baseFontSize-1)
+		lvl = setFontString(self.Power, cfg.fontName, cfg.baseFontSize-1)
 		lvl:SetPoint("RIGHT", class, "LEFT", -2, 0)
 		self.Lvl = lvl
 	end
@@ -505,13 +459,13 @@ local function Style(self, unit)
 		colorcb = oUF.colors.class[classcb]
 
 		self.Castbar = CreateFrame('StatusBar', nil, self)
-		self.Castbar:SetPoint('TOP', UIParentr, 'CENTER', 0, yPosition)
-		self.Castbar:SetStatusBarTexture(textureHealthBar)
+		self.Castbar:SetPoint('TOP', UIParentr, 'CENTER', 0, cfg.position.y)
+		self.Castbar:SetStatusBarTexture(cfg.textureHealthBar)
 		self.Castbar:SetStatusBarColor(colorcb[1], colorcb[2], colorcb[3])
-		self.Castbar:SetBackdrop(backdrophp)
+		self.Castbar:SetBackdrop(cfg.backdrophp)
 		self.Castbar:SetBackdropColor(colorcb[1]/3, colorcb[2]/3, colorcb[3]/3)
 		self.Castbar:SetHeight(19)
-		self.Castbar:SetWidth(325)
+		self.Castbar:SetWidth(cfg.position.x+25)
 		
 		self.Castbar.Spark = self.Castbar:CreateTexture(nil,'OVERLAY')
 		self.Castbar.Spark:SetBlendMode("ADD")
@@ -519,10 +473,10 @@ local function Style(self, unit)
 		self.Castbar.Spark:SetWidth(27)
 		self.Castbar.Spark:SetVertexColor(colorcb[1], colorcb[2], colorcb[3])
 		
-		self.Castbar.Text = setFontString(self.Castbar, fontName, baseFontSize)
+		self.Castbar.Text = setFontString(self.Castbar, cfg.fontName, cfg.baseFontSize)
 		self.Castbar.Text:SetPoint('LEFT', self.Castbar, 2, 0)
 
-		self.Castbar.Time = setFontString(self.Castbar, fontName, baseFontSize)
+		self.Castbar.Time = setFontString(self.Castbar, cfg.fontName, cfg.baseFontSize)
 		self.Castbar.Time:SetPoint('RIGHT', self.Castbar, -2, 0)
 		self.Castbar.CustomTimeText = OverrideCastbarTime
 		self.Castbar.CustomDelayText = OverrideCastbarDelay
@@ -530,7 +484,7 @@ local function Style(self, unit)
 		self.Castbar2 = CreateFrame('StatusBar', nil, self.Castbar)
 		self.Castbar2:SetPoint('BOTTOMRIGHT', self.Castbar, 'BOTTOMRIGHT', 4, -4)
 		self.Castbar2:SetPoint('TOPLEFT', self.Castbar, 'TOPLEFT', -4, 4)
-		self.Castbar2:SetBackdrop(backdrop)
+		self.Castbar2:SetBackdrop(cfg.backdrop)
 		self.Castbar2:SetBackdropColor(0,0,0,1)
 		self.Castbar2:SetHeight(27)
 		self.Castbar2:SetFrameLevel(0)
@@ -539,31 +493,31 @@ local function Style(self, unit)
 		self.Castbar.SafeZone:SetPoint('TOPRIGHT')
 		self.Castbar.SafeZone:SetPoint('BOTTOMRIGHT')
 		self.Castbar.SafeZone:SetHeight(20)
-		self.Castbar.SafeZone:SetTexture(textureHealthBar)
+		self.Castbar.SafeZone:SetTexture(cfg.textureHealthBar)
 		self.Castbar.SafeZone:SetVertexColor(1,1,.01,0.5)
 		
 	end
 	if(unit == 'target') then  -- target cast bar
 		self.Castbar = CreateFrame('StatusBar', nil, self)
-		self.Castbar:SetPoint('TOP', UIParentr, 'CENTER', 0, yPosition+19)
-		self.Castbar:SetStatusBarTexture(textureHealthBar)
+		self.Castbar:SetPoint('TOP', UIParentr, 'CENTER', 0, cfg.position.y+19)
+		self.Castbar:SetStatusBarTexture(cfg.textureHealthBar)
 		self.Castbar:SetStatusBarColor(.81,.81,.25)
-		self.Castbar:SetBackdrop(backdrophp)
+		self.Castbar:SetBackdrop(cfg.backdrophp)
 		self.Castbar:SetBackdropColor(.81/3,.81/3,.25/3)
 		self.Castbar:SetHeight(11)
-		self.Castbar:SetWidth(325)
+		self.Castbar:SetWidth(cfg.position.x+25)
 		
-		self.Castbar.Text = setFontString(self.Castbar, fontName, 12)
+		self.Castbar.Text = setFontString(self.Castbar, cfg.fontName, 12)
 		self.Castbar.Text:SetPoint('LEFT', self.Castbar, 2, 0)
 
-		self.Castbar.Time = setFontString(self.Castbar, fontName, 12)
+		self.Castbar.Time = setFontString(self.Castbar, cfg.fontName, 12)
 		self.Castbar.Time:SetPoint('RIGHT', self.Castbar, -2, 0)
 		self.Castbar.CustomTimeText = OverrideCastbarTime
 		
 		self.Castbar2 = CreateFrame('StatusBar', nil, self.Castbar)
 		self.Castbar2:SetPoint('BOTTOMRIGHT', self.Castbar, 'BOTTOMRIGHT', 4, -4)
 		self.Castbar2:SetPoint('TOPLEFT', self.Castbar, 'TOPLEFT', -4, 4)
-		self.Castbar2:SetBackdrop(backdrop)
+		self.Castbar2:SetBackdrop(cfg.backdrop)
 		self.Castbar2:SetBackdropColor(0,0,0,1)
 		self.Castbar2:SetHeight(21)
 		self.Castbar2:SetFrameLevel(0)
@@ -576,25 +530,25 @@ local function Style(self, unit)
 	end
 	if(unit == 'focus') then -- focus cast bar
 		self.Castbar = CreateFrame('StatusBar', nil, self)
-		self.Castbar:SetPoint('TOP', UIParentr, 'CENTER', 0, yPosition-28)
-		self.Castbar:SetStatusBarTexture(textureHealthBar)
+		self.Castbar:SetPoint('TOP', UIParentr, 'CENTER', 0, cfg.position.y-28)
+		self.Castbar:SetStatusBarTexture(cfg.textureHealthBar)
 		self.Castbar:SetStatusBarColor(.79,.41,.31)
-		self.Castbar:SetBackdrop(backdrophp)
+		self.Castbar:SetBackdrop(cfg.backdrophp)
 		self.Castbar:SetBackdropColor(.79/3,.41/3,.31/3)
 		self.Castbar:SetHeight(11)
-		self.Castbar:SetWidth(325)
+		self.Castbar:SetWidth(cfg.position.x+25)
 		
-		self.Castbar.Text = setFontString(self.Castbar, fontName, 12)
+		self.Castbar.Text = setFontString(self.Castbar, cfg.fontName, 12)
 		self.Castbar.Text:SetPoint('LEFT', self.Castbar, 2, 0)
 
-		self.Castbar.Time = setFontString(self.Castbar, fontName, 12)
+		self.Castbar.Time = setFontString(self.Castbar, cfg.fontName, 12)
 		self.Castbar.Time:SetPoint('RIGHT', self.Castbar, -2, 0)
 		self.Castbar.CustomTimeText = OverrideCastbarTime
 		
 		self.Castbar2 = CreateFrame('StatusBar', nil, self.Castbar)
 		self.Castbar2:SetPoint('BOTTOMRIGHT', self.Castbar, 'BOTTOMRIGHT', 4, -4)
 		self.Castbar2:SetPoint('TOPLEFT', self.Castbar, 'TOPLEFT', -4, 4)
-		self.Castbar2:SetBackdrop(backdrop)
+		self.Castbar2:SetBackdrop(cfg.backdrop)
 		self.Castbar2:SetBackdropColor(0,0,0,1)
 		self.Castbar2:SetHeight(21)
 		self.Castbar2:SetFrameLevel(0)
@@ -615,7 +569,7 @@ local function Style(self, unit)
 		for i = 1, 5 do
 			cpf[i] = CreateFrame("StatusBar", self:GetName().."_ComboPoints"..i, self)
 			cpf[i]:SetSize(16, 16)
-			cpf[i]:SetStatusBarTexture(textureBubble)
+			cpf[i]:SetStatusBarTexture(cfg.textureBubble)
 			if ((i >= 3) and (i <= 4)) then
 				cpf[i]:SetStatusBarColor(.67,.67,.33)
 			elseif (i < 4) then
@@ -647,7 +601,7 @@ local function Style(self, unit)
 			for i = 1, 5 do
 				hpf[i] = CreateFrame("StatusBar", self:GetName().."_Holypower"..i, self)
 				hpf[i]:SetSize(16, 16)
-				hpf[i]:SetStatusBarTexture(textureBubble)
+				hpf[i]:SetStatusBarTexture(cfg.textureBubble)
 				hpf[i]:SetStatusBarColor(.96,.91,.29)  --(.95,.88,.48)
 				hpf[i]:SetFrameLevel(10)
 				local h = CreateFrame("Frame", nil, hpf[i])
@@ -676,10 +630,10 @@ local function Style(self, unit)
 			for i = 1,maxOrbs do
 				so[i] = CreateFrame("StatusBar", self:GetName().."_so"..i, self)
 				so[i]:SetSize(16, 16)
-				so[i]:SetStatusBarTexture(textureBubble)
+				so[i]:SetStatusBarTexture(cfg.textureBubble)
 				so[i]:SetStatusBarColor(1,1,1)
 				so[i]:SetFrameLevel(11)
-				--helper backdrop
+				--helper cfg.backdrop
 				local h = CreateFrame("Frame", nil, so[i])
 				h:SetFrameLevel(10)
 				h:SetPoint("TOPLEFT",-4,3)
@@ -702,7 +656,7 @@ local function Style(self, unit)
 			self.Runes:SetPoint("TOP", -172, 0)
 			self.Runes:SetSize(70, 47)
 			
-				self.Runes:SetBackdrop(backdrop)
+				self.Runes:SetBackdrop(cfg.backdrop)
 				self.Runes:SetBackdropColor(0,0,0,.5)
 			
 				
@@ -717,18 +671,18 @@ local function Style(self, unit)
 				else
 					r:SetPoint("RIGHT", self.Runes[i-2], "LEFT", -5, 0)
 				end
-				r:SetStatusBarTexture(textureRuneBar)
+				r:SetStatusBarTexture(cfg.textureRuneBar)
 				r:GetStatusBarTexture():SetHorizTile(false)
 				r.bd = r:CreateTexture(nil, "BORDER")
 				r.bd:SetAllPoints()
-				r.bd:SetTexture(textureRuneBar)
+				r.bd:SetTexture(cfg.textureRuneBar)
 				r.bd:SetVertexColor(0.15, 0.15, 0.15)
 				
 				local h = CreateFrame("Frame", nil, r)
 				h:SetFrameLevel(10)
 				h:SetPoint("TOPLEFT",-4,3)
 				h:SetPoint("BOTTOMRIGHT",4,-3)
-				h:SetBackdrop(backdrop)
+				h:SetBackdrop(cfg.backdrop)
 				h:SetBackdropColor(0,0,0,1)
 				self.Runes[i] = r
 			end
@@ -760,9 +714,9 @@ oUF:RegisterStyle('AlekkUI', Style)
 oUF:SetActiveStyle('AlekkUI')
 
 local player = oUF:Spawn("player")
-player:SetPoint("CENTER", -305, yPosition) -- -305, -125
+player:SetPoint("CENTER", 0-cfg.position.x, cfg.position.y) -- -305, -125
 local target = oUF:Spawn("target")
-target:SetPoint("CENTER", 305, yPosition) -- 305, -125)
+target:SetPoint("CENTER", cfg.position.x, cfg.position.y) -- 305, -125)
 local pet = oUF:Spawn("pet")
 pet:SetPoint("TOPLEFT", player, "BOTTOMLEFT", 0, -75)
 local tt = oUF:Spawn("targettarget")
@@ -776,7 +730,7 @@ focustarget:SetPoint("TOPLEFT", focus, "TOPRIGHT", 5, 0)
 -- Fix this
 --[[
 local function CreateMainTankStyle(self, unit)
-	self:SetBackdrop(backdrop)
+	self:SetBackdrop(cfg.backdrop)
 	self:SetBackdropColor(0,0,0,1)
 	local maintank = CreateFrame("StatusBar", nil, self)
 	maintank:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 8, 225)

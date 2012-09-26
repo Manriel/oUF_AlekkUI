@@ -1,8 +1,11 @@
 ## Interface: 50001
 ## Author: Manriel
-## Version: 002
-## Title: oUF alekk
+## Version: 005
+## Title: oUF AlekkUI
 ## Notes: oUF layout
-## RequiredDeps: oUF
+## X-Category: UnitFrame
+## Dependencies: oUF
+## DefaultState: enabled
 
+config.lua
 oUF_AlekkUI.lua
