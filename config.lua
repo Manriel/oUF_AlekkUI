@@ -35,11 +35,12 @@ cfg.backdrophp = {
 }
 
 -- mobs level text
+-- strings: level, classification
 cfg.classification = {
-	worldboss = '%s |cffffd700Boss|r',
-	rareelite = '%s |cffffd700R+|r',
-	elite = '%s |cffffd700++|r',
-	rare = '%s Rare',
+	worldboss = '%s |cffffd700%s|r',
+	rareelite = '%s |cffffd700%s|r',
+	elite = '%s |cffffd700%s|r',
+	rare = '%s %s',
 	normal = '%s',
 	trivial = '%s',
 }
