@@ -56,7 +56,8 @@ local function OverrideUpdateName(self, event, unit)
 	
 	if(unit == 'player' or unit == 'target') then
 		local level = not UnitIsConnected(unit) and '??' or UnitLevel(unit) < 1 and '??' or UnitLevel(unit)
-		self.Lvl:SetFormattedText(cfg.classification[UnitClassification(unit)], level, ns.Locale[UnitClassification(unit)])
+		self.Lvl:SetFormattedText(cfg.classification[UnitClassification(unit)], level)
+
 
 		if UnitCanAttack("player", unit) then
 			self.Lvl:SetTextColor(getDifficultyColor(level))
@@ -67,18 +68,12 @@ local function OverrideUpdateName(self, event, unit)
 		local color
 		if UnitIsPlayer(unit) then	
 			color = RAID_CLASS_COLORS[select(2, UnitClass(unit))]
-			
-			-- simple rename for russian localised class names
-			if GetLocale() == "ruRU" then
-				local class, classFileName = UnitClass(unit)
-				if ( classFileName == 'WARLOCK' ) then
-					class = 'Варлок'
-				elseif (classFileName == 'DEATHKNIGHT') then
-					class='Р. смерти'
-				end
+			local class, classFileName = UnitClass(unit)
+			if ( class == 'Чернокнижница' ) or ( class == 'Чернокнижник' ) then
+				class = 'Варлок'
+			elseif (class == 'Рыцарь смерти') then
+				class='Р. смерти'
 			end
-			-- end simple rename
-			
 			self.Class:SetText(class);
 		else
 			self.Class:SetText(UnitCreatureFamily(unit) or UnitCreatureType(unit))
@@ -118,13 +113,13 @@ local function PostUpdateHealth(Health, unit, min, max)
 	local self = Health:GetParent()
 	if(not UnitIsConnected(unit)) then
 		Health:SetValue(0)
-		Health.value:SetText('|cffD7BEA5'..ns.Locale["Offline"])
+		Health.value:SetText('|cffD7BEA5'..'Offline')
 	elseif(UnitIsDead(unit)) then
 		Health:SetValue(0)
-		Health.value:SetText('|cffD7BEA5'..ns.Locale["Dead"])
+		Health.value:SetText('|cffD7BEA5'..'Dead')
 	elseif(UnitIsGhost(unit)) then
 		Health:SetValue(0)
-		Health.value:SetText('|cffD7BEA5'..ns.Locale["Ghost"])
+		Health.value:SetText('|cffD7BEA5'..'Ghost')
 	else
 		if(unit=="player") then
 			Health.value:SetFormattedText("%d | %d | %d|cffffffff%%",min, max ,floor(min/max*100))
@@ -342,14 +337,15 @@ local function Style(self, unit)
 -- raid icon
 --	I not understand, why Alekk not show raid icon overlay on target-target and focus, just comment this
 --	if(unit=="player" or unit=="target" or unit == "focustarget") then
-		local raidIcon = self.Health:CreateTexture(nil, "OVERLAY")
-		raidIcon:SetHeight(18)
-		raidIcon:SetWidth(18)
-		raidIcon:SetPoint("TOP", self, 0, 5)
-		self.RaidIcon = raidIcon
+		local icon = self.Health:CreateTexture(nil, "OVERLAY")
+		icon:SetHeight(18)
+		icon:SetWidth(18)
+		icon:SetPoint("TOP", self, 0, 5)
+		self.RaidIcon = icon
 --	end
 	
 	if(unit=="player" or unit=="target") then
+	
 		local Leader = self.Health:CreateTexture(nil, "OVERLAY")
 		Leader:SetHeight(16)
 		Leader:SetWidth(16)

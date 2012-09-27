@@ -3,13 +3,10 @@
 ## Version: 005
 ## Title: oUF AlekkUI
 ## Notes: Unit frame layout based on oUF framework
-## Notes-ruRU: Модификация фреймов игроков разработанная на основе oUF
+## Notes-ruRU: Модификация фреймов игроков
 ## X-Category: UnitFrame
 ## Dependencies: oUF
-## OptionalDeps: 
 ## DefaultState: enabled
 
-locale\enUS.lua
-locale\ruRU.lua
 config.lua
 oUF_AlekkUI.lua
