@@ -2,7 +2,8 @@
 ## Author: Manriel
 ## Version: 005
 ## Title: oUF AlekkUI
-## Notes: oUF layout
+## Notes: Unit frame layout based on oUF framework
+## Notes-ruRU: Модификация фреймов игроков
 ## X-Category: UnitFrame
 ## Dependencies: oUF
 ## DefaultState: enabled
