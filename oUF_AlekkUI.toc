@@ -1,12 +1,12 @@
 ## Interface: 50001
-## Author: Manriel
+## Author: Manriel, Alekk
 ## Version: 005
 ## Title: oUF AlekkUI
 ## Notes: Unit frame layout based on oUF framework
 ## Notes-ruRU: Модификация фреймов игроков разработанная на основе oUF
 ## X-Category: UnitFrame
 ## Dependencies: oUF
-## OptionalDeps: 
+## OptionalDeps: LibStub, LibSharedMedia-3.0
 ## DefaultState: enabled
 
 locale\enUS.lua
