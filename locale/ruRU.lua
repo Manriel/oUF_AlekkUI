@@ -14,6 +14,7 @@ Locale = {
 	["rare"] = "Редкий",
 	["normal"] = "Обычный",
 	["trivial"] = "Слабый",
+	["minus"] = "Минус",
 }
 
 ns.Locale = Locale

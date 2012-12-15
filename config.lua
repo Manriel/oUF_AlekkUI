@@ -48,6 +48,7 @@ cfg.classification = {
 	rare = '%s %s',
 	normal = '%s',
 	trivial = '%s',
+	minus = '%s',
 }
 
 -- colors

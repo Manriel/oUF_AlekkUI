@@ -12,6 +12,7 @@ Locale = {
 	["rare"] = "Rare",
 	["normal"] = "Normal",
 	["trivial"] = "Trivial",
+	["minus"] = "Minus",
 }
 
 ns.Locale = Locale

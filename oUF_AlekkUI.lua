@@ -380,7 +380,8 @@ local function Style(self, unit)
 	--	BuffFrame:Hide()
 	--	hide Blizzard Enchant frames
 	--	TemporaryEnchantFrame:Hide()
-		
+	
+	--[[
 		local Debuffs =  CreateFrame("Frame", nil, self)
 		Debuffs:SetHeight(41*4)
 		Debuffs:SetWidth(41*4)
@@ -392,7 +393,7 @@ local function Style(self, unit)
 		Debuffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 4)
 		
 		self.Debuffs = Debuffs
-	--[[	
+		
 		local Buffs = CreateFrame("Frame", nil, self)
 		Buffs:SetHeight(320)
 		Buffs:SetWidth(42 * 12)
@@ -456,7 +457,7 @@ local function Style(self, unit)
 		self.Combat = Combat
 	end
 
---CastBars
+--CastBars	
 	if(unit == 'player') then -- player cast bar
 		local colorcb
 		local _,classcb = UnitClass(unit)
@@ -484,7 +485,7 @@ local function Style(self, unit)
 		self.Castbar.Time:SetPoint('RIGHT', self.Castbar, -2, 0)
 		self.Castbar.CustomTimeText = OverrideCastbarTime
 		self.Castbar.CustomDelayText = OverrideCastbarDelay
-		
+
 		self.Castbar2 = CreateFrame('StatusBar', nil, self.Castbar)
 		self.Castbar2:SetPoint('BOTTOMRIGHT', self.Castbar, 'BOTTOMRIGHT', 4, -4)
 		self.Castbar2:SetPoint('TOPLEFT', self.Castbar, 'TOPLEFT', -4, 4)
@@ -537,7 +538,7 @@ local function Style(self, unit)
 		self.Castbar:SetPoint('TOP', UIParentr, 'CENTER', 0, cfg.position.y-28)
 		self.Castbar:SetStatusBarTexture(cfg.textureHealthBar)
 		self.Castbar:SetStatusBarColor(.79,.41,.31)
-		self.Castbar:SetBackdrop(cfg.backdrophp)
+		self.Castbar:SetBackdrop(cfg.backdrophp)	
 		self.Castbar:SetBackdropColor(.79/3,.41/3,.31/3)
 		self.Castbar:SetHeight(11)
 		self.Castbar:SetWidth(cfg.position.x+25)
